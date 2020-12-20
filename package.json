@@ -1,0 +1,32 @@
+{
+  "name": "pictmgr",
+  "version": "1.0.0",
+  "description": "Picture management and viewer",
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hn999/pictmgr.git"
+  },
+  "keywords": [
+    "Photo",
+    "viewer"
+  ],
+  "author": "h_n",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/hn999/pictmgr/issues"
+  },
+  "homepage": "https://github.com/hn999/pictmgr#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-password-protect": "^1.0.2",
+    "serve-index": "^1.9.1"
+  }
+}

@@ -3,3 +3,4 @@ __pycache__
 
 copyLog.txt
 .vscode/.ropeproject/objectdb
+node_modules

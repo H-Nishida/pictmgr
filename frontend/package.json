@@ -1,0 +1,23 @@
+{
+  "name": "viewer",
+  "version": "1.0.0",
+  "description": "viewer html of pictmgr",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hn999/pictmgr.git"
+  },
+  "keywords": [
+    "photo",
+    "brower"
+  ],
+  "author": "h_n",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/hn999/pictmgr/issues"
+  },
+  "homepage": "https://github.com/hn999/pictmgr#readme"
+}
