@@ -27,6 +27,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "express-password-protect": "^1.0.2",
+    "glob-ext": "^1.0.1",
     "serve-index": "^1.9.1"
   }
 }

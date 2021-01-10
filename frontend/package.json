@@ -4,7 +4,9 @@
   "description": "viewer html of pictmgr",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npx webpack-cli serve --mode development",
+    "build-dev": "npx webpack --mode development  --config ./webpack.config.js --context ./",
+    "build": "npx webpack --mode production  --config ./webpack.config.js --context ./"
   },
   "repository": {
     "type": "git",
@@ -19,5 +21,25 @@
   "bugs": {
     "url": "https://github.com/hn999/pictmgr/issues"
   },
-  "homepage": "https://github.com/hn999/pictmgr#readme"
+  "homepage": "https://github.com/hn999/pictmgr#readme",
+  "dependencies": {
+    "bootstrap": "^4.5.3",
+    "jquery": "^3.5.1",
+    "jquery-migrate": "^3.3.2",
+    "jquery-ui-touch-punch": "^0.2.3",
+    "jquery.event.drag": "^2.2.2",
+    "popper.js": "^1.16.1",
+    "slickgrid": "^2.4.32"
+  },
+  "devDependencies": {
+    "css-loader": "^5.0.1",
+    "file-loader": "^6.2.0",
+    "image-webpack-loader": "^7.0.1",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.11.0",
+    "webpack-cli": "^4.3.1",
+    "webpack-dev-middleware": "^4.0.2",
+    "webpack-dev-server": "^3.11.1",
+    "webpack-hot-middleware": "^2.25.0"
+  }
 }
