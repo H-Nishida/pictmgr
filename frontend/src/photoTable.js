@@ -12,24 +12,17 @@ export default class PhotoTable {
         this.data = [];
         this.grid = null;
     }
+
     async init() {
         for (var i = 0; i < 100; i++) {
             this.data[i] = {
-                title: "Task " + i,
-                duration: "5 days",
-                percentComplete: Math.round(Math.random() * 100),
-                start: "01/01/2009",
-                finish: "01/05/2009",
-                effortDriven: (i % 5 == 0)
+                date: "Task " + i,
+                photo: "photo" + 1,
             };
         }
         var columns = [
-            {id: "title", name: "Title", field: "title"},
-            {id: "duration", name: "Duration", field: "duration"},
-            {id: "%", name: "% Complete", field: "percentComplete"},
-            {id: "start", name: "Start", field: "start"},
-            {id: "finish", name: "Finish", field: "finish"},
-            {id: "effort-driven", name: "Effort Driven", field: "effortDriven"}
+            {id: "date", name: "Date", field: "date", maxWidth:100},
+            {id: "photo", name: "Photos",field: "photo", formatter: this.renderPhoto},
         ];
 
         var options = {
@@ -37,9 +30,27 @@ export default class PhotoTable {
             editable: false,
             enableAddRow: false,
             enableCellNavigation: false,
-            enableColumnReorder: false
+            enableColumnReorder: false,
+            //enableAsyncPostRender: true
+            forceFitColumns: true
         };
         this.grid = new Slick.Grid("#photoGridArea", this.data, columns, options);
+        this.setResize();
 
+    }
+
+    renderPhoto(cellNode, row, dataContext, colDef) {
+        return "<img class='photoImg' src=http://localhost:3000/photos/2018-04/IMG_20180422_152127.jpg>";
+    }
+
+    setResize() {
+        const resizeImpl = () => {
+            const hWindow = $(window).height();
+            const hHeader = $('#headerArea').height();
+            $('#photoGridArea').css('height', hWindow - hHeader)
+            this.grid.resizeCanvas();
+        };
+        $(window).on("resize", resizeImpl);
+        resizeImpl();
     }
 }
