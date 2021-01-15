@@ -221,6 +221,8 @@ if (typeof Slick === "undefined") {
     var lastRenderedScrollLeft = 0;
     var prevScrollLeft = 0;
     var scrollLeft = 0;
+    var lastRenderedRangeTop = undefined;
+    var lastRenderedRangeBottom = undefined;
 
     var selectionModel;
     var selectedRows = [];
@@ -3779,13 +3781,29 @@ if (typeof Slick === "undefined") {
       var range = getVisibleRange(viewportTop, viewportLeft);
       var buffer = Math.round(viewportH / options.rowHeight);
       var minBuffer = options.minRowBuffer;
+      var nextTop;
+      var nextBottom;
 
       if (vScrollDir == -1) {
-        range.top -= buffer;
-        range.bottom += minBuffer;
+        nextTop = range.top - buffer;
+        nextBottom = range.bottom + minBuffer;
+        if (lastRenderedRangeTop == undefined || (! ((lastRenderedRangeTop <= nextTop) && (nextTop <= lastRenderedRangeBottom)))) {
+          range.top = nextTop;
+          range.bottom = nextBottom;
+        } else {
+          range.top = lastRenderedRangeTop;
+          range.bottom = lastRenderedRangeBottom;
+        }
       } else if (vScrollDir == 1) {
-        range.top -= minBuffer;
-        range.bottom += buffer;
+        nextTop = range.top - minBuffer;
+        nextBottom = range.bottom + buffer;
+        if (lastRenderedRangeTop == undefined || (! ((lastRenderedRangeTop <= nextBottom) && (nextBottom <= lastRenderedRangeBottom)))) {
+          range.top = nextTop;
+          range.bottom = nextBottom;
+        } else {
+          range.top = lastRenderedRangeTop;
+          range.bottom = lastRenderedRangeBottom;
+        }
       } else {
         range.top -= minBuffer;
         range.bottom += minBuffer;
@@ -3793,6 +3811,9 @@ if (typeof Slick === "undefined") {
 
       range.top = Math.max(0, range.top);
       range.bottom = Math.min(getDataLengthIncludingAddNew() - 1, range.bottom);
+
+      lastRenderedRangeTop = range.top;
+      lastRenderedRangeBottom = range.bottom;
 
       range.leftPx -= viewportW;
       range.rightPx += viewportW;
