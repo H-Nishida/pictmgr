@@ -2,5 +2,7 @@
 @import url('slickgrid/slick.grid.css');
 
 .photoImg {
+    width:230px;
     height:140px;
+    object-fit: contain;
 }

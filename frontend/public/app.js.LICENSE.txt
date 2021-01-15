@@ -29,6 +29,35 @@
  * Date: 2020-05-04T22:49Z
  */
 
+/*!
+ * jQuery Migrate - v3.3.2 - 2020-11-17T23:22Z
+ * Copyright OpenJS Foundation and other contributors
+ */
+
+/*!
+ * jquery.event.drag - v 2.2
+ * Copyright (c) 2010 Three Dub Media - http://threedubmedia.com
+ * Open Source MIT License - http://threedubmedia.com/code/license
+ */
+
+/**
+ * @license
+ * (c) 2009-2016 Michael Leibman
+ * michael{dot}leibman{at}gmail{dot}com
+ * http://github.com/mleibman/slickgrid
+ *
+ * Distributed under MIT license.
+ * All rights reserved.
+ *
+ * SlickGrid v2.4
+ *
+ * NOTES:
+ *     Cell/row DOM manipulations are done directly bypassing jQuery's DOM manipulation methods.
+ *     This increases the speed dramatically, but can only be done safely because there are no event handlers
+ *     or data associated with any cell/row DOM nodes.  Cell editors must make sure they implement .destroy()
+ *     and do proper cleanup.
+ */
+
 /**!
  * @fileOverview Kickass library to create and place poppers near their reference elements.
  * @version 1.16.1

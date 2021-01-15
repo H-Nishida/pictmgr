@@ -8,21 +8,18 @@ require('slickgrid/slick.grid')
 
 
 export default class PhotoTable {
-    constructor() {
-        this.data = [];
+    constructor(restApi) {
+        this.data = {length:0};
         this.grid = null;
+        this.restApi = restApi;
+        this.pictWidth = 230;
+        this.pictColNum = 1;
     }
 
     async init() {
-        for (var i = 0; i < 100; i++) {
-            this.data[i] = {
-                date: "Task " + i,
-                photo: "photo" + 1,
-            };
-        }
         var columns = [
             {id: "date", name: "Date", field: "date", maxWidth:100},
-            {id: "photo", name: "Photos",field: "photo", formatter: this.renderPhoto},
+            {id: "photos", name: "Photos", field: "photos", headerCssClass:"photosHeaderCls", formatter: this.renderPhoto1, asyncPostRender: this.renderPhoto2},
         ];
 
         var options = {
@@ -31,16 +28,57 @@ export default class PhotoTable {
             enableAddRow: false,
             enableCellNavigation: false,
             enableColumnReorder: false,
-            //enableAsyncPostRender: true
-            forceFitColumns: true
+            forceFitColumns: true,
+            enableAsyncPostRender: true,
+            minRowBuffer: 30
         };
         this.grid = new Slick.Grid("#photoGridArea", this.data, columns, options);
         this.setResize();
-
+        
     }
 
-    renderPhoto(cellNode, row, dataContext, colDef) {
-        return "<img class='photoImg' src=http://localhost:3000/photos/2018-04/IMG_20180422_152127.jpg>";
+    async readAllData() {
+        const step = this.pictColNum;
+        const cacheCount = await this.restApi.getCacheCount();
+        this.data.length = Math.ceil(cacheCount / step);
+        this.setData(0, cacheCount);
+    }
+
+    async setData(from, to) {
+        const step = this.pictColNum;
+        let cache = await this.restApi.getCacheData(from, to * step);
+        for(let i = from ; i < to; i += step) {
+            this.data[Math.floor(i / step)] = {
+                date:i / step,
+                photos:cache.slice(i - from, i - from + step)
+            }
+            this.grid.invalidateRow(i);
+        }
+        this.grid.updateRowCount();
+        this.grid.render();
+    }
+
+    renderPhoto1(row, cell, value, m, item, self) {
+        // console.log(row);
+
+        let htmlStr = '';
+        htmlStr += `loading...`;
+
+        // htmlStr = '';
+        // for(let url of value) {
+        //     htmlStr += `<img class='photoImg' src=${document.devHost + url}>`;
+        // }
+
+        return htmlStr;
+    }
+
+    renderPhoto2(cellNode, row, dataContext, colDef) {
+        console.log(cellNode[0].innerHTML, row);
+        let htmlStr = '';
+        for(let url of dataContext.photos) {
+            htmlStr += `<img class='photoImg' src=${document.devHost + url}>`;
+        }
+        cellNode[0].innerHTML = htmlStr;
     }
 
     setResize() {
@@ -49,6 +87,10 @@ export default class PhotoTable {
             const hHeader = $('#headerArea').height();
             $('#photoGridArea').css('height', hWindow - hHeader)
             this.grid.resizeCanvas();
+
+            const width = $('.photosHeaderCls').width();
+            this.pictColNum = Math.floor(width / this.pictWidth);
+            this.readAllData();
         };
         $(window).on("resize", resizeImpl);
         resizeImpl();

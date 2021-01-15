@@ -32,6 +32,7 @@ module.exports = {
         contentBase: path.resolve(__dirname, "public"),
         watchOptions: {
             poll: true
-        }
+        },
+        port: 9998
     }
 };
