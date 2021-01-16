@@ -27,9 +27,12 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "exif-reader": "^1.0.3",
     "express": "^4.17.1",
     "express-password-protect": "^1.0.2",
     "glob-ext": "^1.0.1",
-    "serve-index": "^1.9.1"
+    "pako": "^2.0.3",
+    "serve-index": "^1.9.1",
+    "sharp": "^0.27.0"
   }
 }

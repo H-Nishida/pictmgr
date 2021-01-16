@@ -5,3 +5,4 @@ copyLog.txt
 .vscode/.ropeproject/objectdb
 node_modules
 .DS_Store
+cache.dat

@@ -74,6 +74,8 @@ if (typeof Slick === "undefined") {
       forceFitColumns: false,
       enableAsyncPostRender: false,
       asyncPostRenderDelay: 50,
+      asyncPostRenderDelayAfter: 5,
+      asyncPostRenderReadExtraRows: 10,
       enableAsyncPostRenderCleanup: false,
       asyncPostRenderCleanupDelay: 40,
       autoHeight: false,
@@ -111,6 +113,7 @@ if (typeof Slick === "undefined") {
       showCellSelection: true,
       viewportClass: null,
       minRowBuffer: 3,
+      rowBufferExtra: 10,
       emulatePagingWhenScrolling: true, // when scrolling off bottom of viewport, place new row at top of viewport
       editorCellNavOnLRKeys: false,
       enableMouseWheelScrollHandler: true,
@@ -3779,7 +3782,7 @@ if (typeof Slick === "undefined") {
 
     function getRenderedRange(viewportTop, viewportLeft) {
       var range = getVisibleRange(viewportTop, viewportLeft);
-      var buffer = Math.round(viewportH / options.rowHeight);
+      var buffer = Math.round(viewportH / options.rowHeight) + options.rowBufferExtra;
       var minBuffer = options.minRowBuffer;
       var nextTop;
       var nextBottom;
@@ -4083,8 +4086,8 @@ if (typeof Slick === "undefined") {
           postProcessedRows[row][columnIdx] = 'C';
         }
       }
-      postProcessFromRow = Math.min(postProcessFromRow, row);
-      postProcessToRow = Math.max(postProcessToRow, row);
+      postProcessFromRow = Math.min(postProcessFromRow, row) - options.asyncPostRenderReadExtraRows;
+      postProcessToRow = Math.max(postProcessToRow, row) + options.asyncPostRenderReadExtraRows;
       startPostProcessing();
     }
 
@@ -4147,8 +4150,8 @@ if (typeof Slick === "undefined") {
 	        }
       }
 
-      postProcessFromRow = visible.top;
-      postProcessToRow = Math.min(getDataLengthIncludingAddNew() - 1, visible.bottom);
+      postProcessFromRow = visible.top  - options.asyncPostRenderReadExtraRows;
+      postProcessToRow = Math.min(getDataLengthIncludingAddNew() - 1, visible.bottom) + options.asyncPostRenderReadExtraRows;
       startPostProcessing();
 
       lastRenderedScrollTop = scrollTop;
@@ -4371,7 +4374,7 @@ if (typeof Slick === "undefined") {
           }
         }
 
-        h_postrender = setTimeout(asyncPostProcessRows, options.asyncPostRenderDelay);
+        h_postrender = setTimeout(asyncPostProcessRows, options.asyncPostRenderDelayAfter);
         return;
       }
     }

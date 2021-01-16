@@ -1,4 +1,8 @@
 "use strict"
+const fs = require('fs');
+const sharp = require('sharp');
+const pako = require('pako');
+const exif = require('exif-reader')
 const globExt = require('glob-ext');
 const express = require('express')
 const cors = require('cors')
@@ -22,8 +26,8 @@ const config = {
 }
 let cacheUpdating = false;
 let cacheData = [];
-
-
+const CACHE_FILE = "cache.dat";
+    
 async function main() {
     //app.use(passwordProtected(config))
     app.use(express.json())
@@ -42,21 +46,88 @@ async function main() {
     })
 
     // TODO : test
-    doCache().then();
+    let loadedData = loadData(CACHE_FILE);
+    if (loadedData == undefined) {
+        doCache().then();
+    } else {
+        cacheData = loadedData;
+    }
 }
 
 async function doCache() {
-    if (cacheUpdating == false) {
-        cacheUpdating = true;
-        cacheData = [];
-        let filePathes = await globExt(PHOTO_SRC_DIR + "/**", TARGET_EXTS,
-            (match) => { 
+    console.log("start cache");
+    cacheUpdating = true;
+    cacheData = [];
+    let filePathes = await globExt(PHOTO_SRC_DIR + "/**", TARGET_EXTS,
+        (match) => { 
+            fs.stat(match, (err, stats) => {
+                if (err) {
+                    throw err;
+                }
+                console.log(match)
                 const relPath = match.substring(PHOTO_SRC_DIR.length);
-                cacheData.push('/photos' + relPath);
-                //console.info(relPath) 
+                sharp(match).metadata().then(function (metadata) {
+                    metadata.stats = stats;
+                    let date = stats.mtime.toISOString();
+                    if (metadata.exif) {
+                        metadata.exif = exif(metadata.exif);
+                        if (metadata.exif.DateTimeOriginal) {
+                            date = metadata.exif.DateTimeOriginal;
+                        }
+                    }
+                    const record = {
+                        imgsrc: '/photos' + relPath,
+                        metadata: metadata,
+                        date: date
+                    };
+                    cacheData.push(record);
+                }).catch((reason) => {
+                    let metadata = {}
+                    metadata.stats = stats;
+                    let date = stats.mtime.toISOString();
+                    const record = {
+                        imgsrc: '/photos' + relPath,
+                        metadata: metadata,
+                        date: date
+                    };
+                    cacheData.push(record);
+                });
             });
-    }
+
+        });
+    cacheData.sort((a, b) => a.date.localeCompare(b.date));
+    console.log("end cache len", cacheData.length);
     cacheUpdating = false;
+    // write to file
+    saveData(cacheData, CACHE_FILE)
+
 }
+
+function saveData(data, filePath) {
+    try {
+        const enc = new TextEncoder();
+        const dataJson = JSON.stringify(data);
+        const dataJsonBuf = enc.encode(dataJson);
+        const dataJsonBufCompressed = pako.deflate(dataJsonBuf);
+        fs.writeFileSync(filePath, dataJsonBufCompressed);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function loadData(filePath) {
+    try {
+        const dec = new TextDecoder("utf-8")
+        const dataJsonBufCompressed = fs.readFileSync(filePath);
+        const dataJsonBuf = pako.inflate(dataJsonBufCompressed);
+        const dataJson = dec.decode(dataJsonBuf);
+        const data = JSON.parse(dataJson);
+        return data;
+    } catch (e) {
+        return undefined;
+    }
+}
+
 
 main().then();
