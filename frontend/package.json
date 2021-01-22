@@ -29,7 +29,8 @@
     "jquery-ui-touch-punch": "^0.2.3",
     "jquery.event.drag": "^2.2.2",
     "popper.js": "^1.16.1",
-    "slickgrid": "^2.4.32"
+    "slickgrid": "^2.4.32",
+    "viewerjs": "^1.9.0"
   },
   "devDependencies": {
     "css-loader": "^5.0.1",

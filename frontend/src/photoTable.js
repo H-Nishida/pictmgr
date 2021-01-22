@@ -5,7 +5,7 @@ require('jquery-migrate')
 require('jquery.event.drag/jquery.event.drag.js')($)
 require('slickgrid/slick.core')
 require('../libs/slickgrid/slick.grid')
-
+const Viewer = require('viewerjs')
 
 export default class PhotoTable {
     constructor(restApi) {
@@ -22,7 +22,7 @@ export default class PhotoTable {
     async init() {
         var columns = [
             {id: "date", name: "Date", field: "date", maxWidth:100, formatter:this.dateFormat},
-            {id: "photos", name: "Photos", field: "photos", headerCssClass:"photosHeaderCls", formatter: this.renderPhoto1, asyncPostRender: this.renderPhoto2},
+            {id: "photos", name: "Photos", field: "photos", headerCssClass:"photosHeaderCls", formatter: this.renderPhoto1, asyncPostRender: this.renderPhoto2.bind(this)},
         ];
 
         var options = {
@@ -36,7 +36,7 @@ export default class PhotoTable {
             minRowBuffer: 30,
             asyncPostRenderDelay: 50,
             rowBufferExtra: 10,
-            asyncPostRenderReadExtraRows: 10,
+            asyncPostRenderReadExtraRows: 10
         };
         this.grid = new Slick.Grid("#photoGridArea", this.data, columns, options);
         this.grid.onViewportChanged.subscribe((e, args) => {
@@ -45,10 +45,23 @@ export default class PhotoTable {
             this.loadingTimer = setTimeout(
                 () => this.viewPortChanged(vp.top, vp.bottom).then(),
                 options.asyncPostRenderDelay    
-            );
-        });
+                );
+            });
         this.setResize();
-        this.viewPortChanged(0, 0);
+        await this.updateCacheCount();
+        await this.viewPortChanged(0, 100);
+        this.viewerG = new Viewer(document.getElementById("photoGridArea"), {
+            view(ev) {
+                const info = JSON.parse(ev.detail.originalImage.dataset.imginfo);
+                if (info.isVideo) {
+                    
+                } else {
+                    ev.detail.image.src = info.imgpath;
+                    ev.detail.originalImage.src = info.imgpath;
+                }
+            },
+            title: [true, (image, imageData) => `${image.alt.replace(".thumbnail.png", "")} (${imageData.naturalWidth} × ${imageData.naturalHeight})`]
+        });
     }
 
     async viewPortChanged(from, to) {
@@ -79,9 +92,14 @@ export default class PhotoTable {
         const cacheCount = await this.restApi.getCacheCount();
         this.cacheCount = cacheCount;
         const nextLength = Math.ceil(cacheCount / this.pictColNum);
+        this.updatePictColNum();
         if (nextLength != this.data.length) {
+            console.log("data length changed", nextLength)
             this.data.length = nextLength;
             this.grid.updateRowCount();
+            this.grid.render();
+            let vp = this.grid.getViewport();
+            this.grid.scrollRowToTop(vp.top);
         }
     }
 
@@ -112,24 +130,30 @@ export default class PhotoTable {
     renderPhoto2(cellNode, row, dataContext, colDef) {
         if (dataContext) {
             console.log(cellNode[0].innerHTML, row);
-            let htmlStr = '';
+            let htmlStr = "<span class='photoOuter'>";
             for (let photo of dataContext.photos) {
-                const imgsrc = document.devHost + photo.imgsrc;
-                const isMovie = (
-                    photo.imgsrc.toLowerCase().endsWith(".mp4") ||
-                    photo.imgsrc.toLowerCase().endsWith(".mov") ||
-                    photo.imgsrc.toLowerCase().endsWith(".mts") ||
-                    photo.imgsrc.toLowerCase().endsWith(".m2ts") ||
-                    photo.imgsrc.toLowerCase().endsWith(".avi") ||
-                    photo.imgsrc.toLowerCase().endsWith(".gp3"));
-                if (isMovie) {
-                    htmlStr += `<video class='photoImg' src=${imgsrc} controls>`;
+                const thumbnail = document.devHost + photo.thumbnail;
+                photo.imgpath = document.devHost + photo.imgsrc;
+                if (photo.isVideo) {
+                    //htmlStr += `<video class='photoImg' src=${thumbnail} controls></video>`;
+                    htmlStr += `<div><image class='photoImg' src="${thumbnail}" data-imginfo='${JSON.stringify(photo)}'></image></div>`;
                 } else {
-                    htmlStr += `<img class='photoImg' src=${imgsrc}>`;
+                    htmlStr += `<div><image class='photoImg' src="${thumbnail}" data-imginfo='${JSON.stringify(photo)}'></image></div>`;
                 }
             }
+            htmlStr += "</span>";
             cellNode[0].innerHTML = htmlStr;
+            const imgDoms = cellNode[0].getElementsByClassName('photoImg');
+            for (const imgDom of imgDoms) {
+                // TODO
+            }
+            this.viewerG.update();
         }
+    }
+
+    updatePictColNum() {
+        const width = $('.photosHeaderCls').width();
+        this.pictColNum = Math.floor(width / this.pictWidth);
     }
 
     setResize() {
@@ -138,9 +162,6 @@ export default class PhotoTable {
             const hHeader = $('#headerArea').height();
             $('#photoGridArea').css('height', hWindow - hHeader)
             this.grid.resizeCanvas();
-
-            const width = $('.photosHeaderCls').width();
-            this.pictColNum = Math.floor(width / this.pictWidth);
             this.updateCacheCount();
         };
         $(window).on("resize", resizeImpl);

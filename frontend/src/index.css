@@ -1,8 +1,15 @@
 @import url('bootstrap/dist/css/bootstrap.min.css');
 @import url('slickgrid/slick.grid.css');
+@import url('viewerjs/dist/viewer.css');
 
 .photoImg {
     width:230px;
     height:140px;
     object-fit: contain;
+}
+.photoImgHide {
+    display: none;
+}
+.photoOuter {
+    display: inline-flex;
 }
