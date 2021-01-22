@@ -1,14 +1,12 @@
 @import url('bootstrap/dist/css/bootstrap.min.css');
 @import url('slickgrid/slick.grid.css');
 @import url('viewerjs/dist/viewer.css');
+@import url('video.js/dist/video-js.css');
 
 .photoImg {
     width:230px;
     height:140px;
-    object-fit: contain;
-}
-.photoImgHide {
-    display: none;
+    object-fit: cover;
 }
 .photoOuter {
     display: inline-flex;

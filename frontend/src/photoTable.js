@@ -6,6 +6,7 @@ require('jquery.event.drag/jquery.event.drag.js')($)
 require('slickgrid/slick.core')
 require('../libs/slickgrid/slick.grid')
 const Viewer = require('viewerjs')
+const videojs = require('video.js').default;
 
 export default class PhotoTable {
     constructor(restApi) {
@@ -54,7 +55,7 @@ export default class PhotoTable {
             view(ev) {
                 const info = JSON.parse(ev.detail.originalImage.dataset.imginfo);
                 if (info.isVideo) {
-                    
+                    ev.detail.image.classList.add("videoImage");
                 } else {
                     ev.detail.image.src = info.imgpath;
                     ev.detail.originalImage.src = info.imgpath;
@@ -117,7 +118,7 @@ export default class PhotoTable {
     }
 
     dateFormat(row, cell, value, m, item, self) {
-        return value.substring(0, 4) + "<br>" + value.substring(5, 10);
+        return `<h4><div class="badge badge-dark">${value.substring(0, 4)}<br>${value.substring(5, 10)}</div></h4>`;
     }
 
     renderPhoto1(row, cell, value, m, item, self) {
@@ -135,8 +136,13 @@ export default class PhotoTable {
                 const thumbnail = document.devHost + photo.thumbnail;
                 photo.imgpath = document.devHost + photo.imgsrc;
                 if (photo.isVideo) {
+                    htmlStr += `
+                        <video class='photoImg video-js  vjs-default-skin vjs-big-play-centered' data-setup='{}' preload="auto" controls poster="${thumbnail}">
+                            <source src="${photo.imgpath}">
+                        </video>
+                        `;
                     //htmlStr += `<video class='photoImg' src=${thumbnail} controls></video>`;
-                    htmlStr += `<div><image class='photoImg' src="${thumbnail}" data-imginfo='${JSON.stringify(photo)}'></image></div>`;
+                    //htmlStr += `<div><image class='photoImg videoImage' src="${thumbnail}" data-imginfo='${JSON.stringify(photo)}'></image></div>`;
                 } else {
                     htmlStr += `<div><image class='photoImg' src="${thumbnail}" data-imginfo='${JSON.stringify(photo)}'></image></div>`;
                 }
@@ -148,6 +154,10 @@ export default class PhotoTable {
                 // TODO
             }
             this.viewerG.update();
+            const videoDoms = cellNode[0].getElementsByTagName('video');
+            for (let videoDom of videoDoms) {
+                videojs(videoDom);
+            }
         }
     }
 
