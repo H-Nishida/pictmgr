@@ -68,7 +68,7 @@ export default class PhotoTable {
     async viewPortChanged(from, to) {
         let i;
         let allDataOK = true;
-        for (i = from; i <= to; i++) {
+        for (i = from; i < Math.min(to, this.data.length); i++) {
             if (this.data[i] === undefined) {
                 allDataOK = false;
                 break;
@@ -95,7 +95,10 @@ export default class PhotoTable {
         const nextLength = Math.ceil(cacheCount / this.pictColNum);
         this.updatePictColNum();
         if (nextLength != this.data.length) {
-            console.log("data length changed", nextLength)
+            console.log("data length changed", nextLength);
+            for (let idx in this.data) {
+                this.data[idx] = undefined;
+            }
             this.data.length = nextLength;
             this.grid.updateRowCount();
             this.grid.render();
@@ -107,12 +110,12 @@ export default class PhotoTable {
     async setData(from, to) {
         const step = this.pictColNum;
         const fromIdx = Math.max(0, from * step);
-        const toIdx = Math.min(this.cacheCount - 1, to * step);
+        const toIdx = Math.min(this.cacheCount, to * step);
         let cache = await this.restApi.getCacheData(fromIdx, toIdx);
         for(let i = fromIdx ; i < toIdx; i += step) {
             this.data[Math.floor(i / step)] = {
                 date:cache[i - fromIdx].date,
-                photos:cache.slice(i - fromIdx, i - fromIdx + step)
+                photos:cache.slice(i - fromIdx, Math.min(i - fromIdx + step, cache.length))
             }
         }
     }
@@ -141,8 +144,6 @@ export default class PhotoTable {
                             <source src="${photo.imgpath}">
                         </video>
                         `;
-                    //htmlStr += `<video class='photoImg' src=${thumbnail} controls></video>`;
-                    //htmlStr += `<div><image class='photoImg videoImage' src="${thumbnail}" data-imginfo='${JSON.stringify(photo)}'></image></div>`;
                 } else {
                     htmlStr += `<div><image class='photoImg' src="${thumbnail}" data-imginfo='${JSON.stringify(photo)}'></image></div>`;
                 }

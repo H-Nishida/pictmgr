@@ -1,14 +1,26 @@
 {
-  "name": "pictmgr",
+  "name": "familyphoto",
   "version": "1.0.0",
-  "description": "Picture management and viewer",
-  "main": "index.js",
+  "description": "Photo viewer",
+  "main": "main.js",
   "directories": {
     "doc": "doc"
   },
+  "build": {
+    "appId": "FamilyPhoto",
+    "mac": {
+      "category": "public.app-category.photography"
+    },
+    "directories": {
+      "output": "dist"
+    }
+  },
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx electron main.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "npx electron-builder --dir",
+    "dist": "npx electron-builder --publish=never",
+    "postinstall": "npx electron-builder install-app-deps"
   },
   "repository": {
     "type": "git",
@@ -36,5 +48,9 @@
     "serve-index": "^1.9.1",
     "sharp": "^0.27.0",
     "simple-thumbnail": "^1.6.5"
+  },
+  "devDependencies": {
+    "electron": "^11.2.1",
+    "electron-builder": "^22.9.1"
   }
 }
