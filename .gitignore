@@ -3,6 +3,8 @@ __pycache__
 
 copyLog.txt
 .vscode/.ropeproject/objectdb
-node_modules
+**/node_modules
 .DS_Store
 cache
+dist
+build

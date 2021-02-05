@@ -4,9 +4,9 @@
   "description": "viewer html of pictmgr",
   "main": "index.js",
   "scripts": {
-    "dev": "npx webpack-cli serve --mode development",
-    "build-dev": "npx webpack --mode development  --config ./webpack.config.js --context ./",
-    "build": "npx webpack --mode production  --config ./webpack.config.js --context ./"
+    "dev": "yarn -s run webpack-cli serve --mode development",
+    "build-dev": "yarn -s run webpack --mode development  --config ./webpack.config.js --context ./",
+    "build": "yarn -s run webpack --mode production  --config ./webpack.config.js --context ./"
   },
   "repository": {
     "type": "git",

@@ -1,26 +1,24 @@
 {
-  "name": "familyphoto",
+  "name": "pictmgrbackend",
   "version": "1.0.0",
   "description": "Photo viewer",
-  "main": "main.js",
-  "directories": {
-    "doc": "doc"
+  "main": "./dist/app.js",
+  "scripts": {
+    "build-dev": "yarn -s run webpack --mode development  --config ./webpack.config.js --context ./",
+    "build": "yarn -s run webpack --mode production  --config ./webpack.config.js --context ./",
+    "start": "yarn build && yarn -s run electron ./dist/app.js",
+    "start2": "yarn build && yarn -s run electron-builder start",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "build": {
-    "appId": "FamilyPhoto",
+    "appId": "family.photo",
     "mac": {
       "category": "public.app-category.photography"
     },
     "directories": {
-      "output": "dist"
+      "output": "build"
     }
-  },
-  "scripts": {
-    "start": "npx electron main.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "pack": "npx electron-builder --dir",
-    "dist": "npx electron-builder --publish=never",
-    "postinstall": "npx electron-builder install-app-deps"
   },
   "repository": {
     "type": "git",
@@ -37,12 +35,17 @@
   },
   "homepage": "https://github.com/hn999/pictmgr#readme",
   "dependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "7",
+    "babel-preset-env": "^1.7.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "exif-reader": "^1.0.3",
     "express": "^4.17.1",
     "express-password-protect": "^1.0.2",
     "glob-ext": "^1.0.2",
+    "html-loader": "^1.3.2",
+    "html-webpack-plugin": "^4.5.1",
     "image-thumbnail": "^1.0.13",
     "pako": "^2.0.3",
     "serve-index": "^1.9.1",
@@ -50,7 +53,15 @@
     "simple-thumbnail": "^1.6.5"
   },
   "devDependencies": {
+    "copy-webpack-plugin": "^7.0.0",
+    "css-loader": "^5.0.1",
     "electron": "^11.2.1",
-    "electron-builder": "^22.9.1"
+    "electron-builder": "^22.9.1",
+    "file-loader": "^6.2.0",
+    "image-webpack-loader": "^7.0.1",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.17.0",
+    "webpack-cli": "^4.4.0",
+    "webpack-node-externals": "^2.5.2"
   }
 }

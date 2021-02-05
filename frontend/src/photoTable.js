@@ -2,8 +2,8 @@ var jQuery = require('jquery')
 window.$ = jQuery;
 window.jQuery = jQuery;
 require('jquery-migrate')
-require('jquery.event.drag/jquery.event.drag.js')($)
-require('slickgrid/slick.core')
+require('jquery.event.drag/jquery.event.drag')($)
+require('slickgrid')
 require('../libs/slickgrid/slick.grid')
 const Viewer = require('viewerjs')
 const videojs = require('video.js').default;

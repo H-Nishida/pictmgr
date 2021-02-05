@@ -1,3 +1,4 @@
+require('file-loader?name=[name].[ext]!./viewer.html');
 import 'bootstrap';
 import './index.css';
 import UiMain from "./main";

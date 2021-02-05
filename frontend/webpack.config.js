@@ -24,12 +24,12 @@ module.exports = {
     entry: "./src/index.js",
     output: {
         filename: "app.js",
-        path: path.resolve(__dirname, "public"),
+        path: path.resolve(__dirname, "../dist/public"),
     },
     devServer: {
         inline: false,
         hot: true,
-        contentBase: path.resolve(__dirname, "public"),
+        contentBase: path.resolve(__dirname, "../dist/public"),
         watchOptions: {
             poll: true
         },
