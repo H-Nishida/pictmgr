@@ -8,3 +8,5 @@ copyLog.txt
 cache
 dist
 build
+.tgz
+yarn-error.log

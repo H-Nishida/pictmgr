@@ -1,15 +1,15 @@
 {
-  "name": "pictmgrbackend",
+  "name": "pictmgr",
   "version": "1.0.0",
   "description": "Photo viewer",
   "main": "./dist/app.js",
   "scripts": {
+    "postinstall": "pushd frontend; yarn install; popd",
     "build-dev": "yarn -s run webpack --mode development  --config ./webpack.config.js --context ./",
     "build": "yarn -s run webpack --mode production  --config ./webpack.config.js --context ./",
-    "start": "yarn build && yarn -s run electron ./dist/app.js",
-    "start2": "yarn build && yarn -s run electron-builder start",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "build-front": "pushd frontend; yarn build; popd",
+    "start": "yarn build && yarn build-front && yarn -s run electron ./dist/app.js",
+    "dist": "yarn build && yarn build-front && electron-builder"
   },
   "build": {
     "appId": "family.photo",

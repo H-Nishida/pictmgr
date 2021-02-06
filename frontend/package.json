@@ -1,5 +1,5 @@
 {
-  "name": "viewer",
+  "name": "pictmgr-frontend",
   "version": "1.0.0",
   "description": "viewer html of pictmgr",
   "main": "index.js",

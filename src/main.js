@@ -39,7 +39,7 @@ const USER_DATA = app.getPath('userData');
 const CACHE_FILE = path.join(USER_DATA, "cache/cache.dat");
 const CACHE_DIR = path.join(USER_DATA, "cache");
 const THUMBNAILS_DIR = CACHE_DIR + "/thumbnails"
-log.info("cache-dir is " + CACHE_DIR);
+console.info("cache-dir is " + CACHE_DIR);
     
 async function main() {
     //app.use(passwordProtected(config))
