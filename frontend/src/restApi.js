@@ -11,12 +11,24 @@ export default class RestApi {
         const jsonRes = await this.fetchImpl('/api/cache/count');
         return jsonRes["count"];
     }
+    async getCacheStat() {
+        const jsonRes = await this.fetchImpl('/api/cache/stat');
+        return jsonRes;
+    }
     async getCacheData(from, to) {
         const jsonRes = await this.fetchImpl('/api/cache/data', {from:from, to:to});
         return jsonRes;
     }
     async startCache() {
         const jsonRes = await this.fetchImpl('/api/cache/start', {});
+    }
+    async getConfig() {
+        const jsonRes = await this.fetchImpl('/api/config/get', {});
+        return jsonRes;
+    }
+    async setConfig(newConfig) {
+        const jsonRes = await this.fetchImpl('/api/config/set', newConfig);
+        return jsonRes;
     }
     async fetchImpl(url, postJson) {
         url = document.devHost + url;

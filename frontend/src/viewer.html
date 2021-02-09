@@ -37,9 +37,21 @@
                 <div class="sidebar-sticky pt-3">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
-                            <span data-feather="file"></span>
-                            All photos
+                            <a class="nav-link targetNav" id="navPhoto" href="#ArticlePhoto">
+                                <span data-feather="file"></span>
+                                All photos
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link targetNav"  id="navCache" href="#ArticleCache">
+                                <span data-feather="cache"></span>
+                                Cache
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link targetNav"  id="navConfig" href="#ArticleConfiguration">
+                                <span data-feather="config"></span>
+                                Configurations
                             </a>
                         </li>
                     </ul>
@@ -49,28 +61,77 @@
             <!-- Main Area -->
             <!-- **********************************************************-->
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-                <div id="photoGridArea"></div>
+
+                <!-- **********************************************************-->
+                <!-- All photos -->
+                <!-- **********************************************************-->
+                <article id="ArticlePhoto" class="topArticle">
+                    <div id="photoGridArea"></div>
+                </article>
+
+                <!-- **********************************************************-->
+                <!-- Cache -->
+                <!-- **********************************************************-->
+                <article id="ArticleCache" class="topArticle">
+                    <div class="card">
+                        <div class="card-header">
+                            Cache
+                        </div>
+                        <div class="card-body">
+                            <div class="container">
+                                <div class="row"><div class="col-sm">Updating</div><div class="col-sm"><span class="badge badge-secondary" id="cacheUpdating"></span></div></div>
+                                <div class="row"><div class="col-sm">Image count</div><div class="col-sm"><span class="badge badge-secondary" id="cacheImageCount"></span></div></div>
+                                <div class="row"><div class="col-sm">Video count</div><div class="col-sm"><span class="badge badge-secondary" id="cacheVideoCount"></span></div></div>
+                                <div class="row"><div class="col-sm">Last update</div><div class="col-sm"><span class="badge badge-secondary" id="cacheLastUpdate"></span></div></div>
+                                <div class="row"><div class="col-sm">Latest timestamp</div><div class="col-sm"><span class="badge badge-secondary" id="cacheLatestTimestamp"></span></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <form>
+                        <button type="button" class="btn btn-primary" id="ButtonUpdateCache">Update Cache</button>
+                    </form>
+                </article>
+
+                <!-- **********************************************************-->
+                <!-- Configurations -->
+                <!-- **********************************************************-->
+                <article id="ArticleConfiguration" class="topArticle">
+                    <div class="card">
+                        <div class="card-header">
+                            Configurations
+                        </div>
+                        <div class="card-body">
+                            <div id="configArea"></div>
+                            <form>
+                                <button type="button" class="btn btn-primary" id="ButtonSave">Save</button>
+                                <button type="button" class="btn btn-secondary" id="ButtonReset">Reset</button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
 
                 <!-- **********************************************************-->
                 <!-- Dialog of photo -->
                 <!-- **********************************************************-->
-                <div id="photoModal" class="modal">
-                    <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                    <h5 class="modal-title" id="photoTitle">Photo</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
+                <article>
+                    <div id="photoModal" class="modal">
+                        <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="photoTitle">Photo</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container-xl"><image id="photoArea" class="container-xl"></image></div>
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+                        </div>
+                        </div>
                     </div>
-                    <div class="modal-body">
-                        <div class="container-xl"><image id="photoArea" class="container-xl"></image></div>
-                    </div>
-                    <div class="modal-footer">
-                    </div>
-                    </div>
-                    </div>
-                </div>
+                </article>
             </main>
         </div>
     </div>

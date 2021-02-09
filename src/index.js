@@ -1,4 +1,7 @@
-const { app, BrowserWindow } = require('electron');
+"use strict";
+const electron_app = require('electron');
+const app = electron_app.app;
+const BrowserWindow = electron_app.BrowserWindow;
 require('./main.js');
 
 async function main() {
@@ -25,7 +28,7 @@ async function createWindow() {
     mainWindow.loadURL(`http://localhost:3000/`);
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    //mainWindow.webContents.openDevTools()
 }
 
 main().then();

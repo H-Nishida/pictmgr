@@ -8,8 +8,10 @@
     "build-dev": "yarn -s run webpack --mode development  --config ./webpack.config.js --context ./",
     "build": "yarn -s run webpack --mode production  --config ./webpack.config.js --context ./",
     "build-front": "pushd frontend; yarn build; popd",
-    "start": "yarn build && yarn build-front && yarn -s run electron ./dist/app.js",
-    "dist": "yarn build && yarn build-front && electron-builder"
+    "start": "yarn -s run electron ./dist/app.js",
+    "start-dev": "yarn -s run electron ./src/index.js",
+    "dist": "yarn build && yarn build-front && electron-builder",
+    "runpkg-mac": "./build/mac/pictmgr.app/Contents/MacOS/pictmgr"
   },
   "build": {
     "appId": "family.photo",
@@ -49,8 +51,7 @@
     "image-thumbnail": "^1.0.13",
     "pako": "^2.0.3",
     "serve-index": "^1.9.1",
-    "sharp": "^0.27.0",
-    "simple-thumbnail": "^1.6.5"
+    "sharp": "^0.27.0"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^7.0.0",

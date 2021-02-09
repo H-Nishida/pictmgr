@@ -11,3 +11,6 @@
 .photoOuter {
     display: inline-flex;
 }
+.topArticle {
+    display: none;
+}

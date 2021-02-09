@@ -9,10 +9,11 @@ const Viewer = require('viewerjs')
 const videojs = require('video.js').default;
 
 export default class PhotoTable {
-    constructor(restApi) {
+    constructor(uiMain) {
+        this.uiMain = uiMain;
         this.data = {length:0};
         this.grid = null;
-        this.restApi = restApi;
+        this.restApi = uiMain.restApi;
         this.pictWidth = 230;
         this.pictColNum = 1;
         this.readPageSize = 200;
@@ -140,7 +141,7 @@ export default class PhotoTable {
                 photo.imgpath = document.devHost + photo.imgsrc;
                 if (photo.isVideo) {
                     htmlStr += `
-                        <video class='photoImg video-js  vjs-default-skin vjs-big-play-centered' data-setup='{}' preload="auto" controls poster="${thumbnail}">
+                        <video class='photoImg video-js  vjs-default-skin vjs-big-play-centered' data-setup='{}' preload="auto" controls>
                             <source src="${photo.imgpath}">
                         </video>
                         `;
@@ -168,14 +169,17 @@ export default class PhotoTable {
     }
 
     setResize() {
-        const resizeImpl = () => {
-            const hWindow = $(window).height();
-            const hHeader = $('#headerArea').height();
-            $('#photoGridArea').css('height', hWindow - hHeader)
+        $(window).on("resize", () => this.doResize);
+        this.doResize();
+    }
+
+    doResize() {
+        const hWindow = $(window).height();
+        const hHeader = $('#headerArea').height();
+        $('#photoGridArea').css('height', hWindow - hHeader)
+        if (this.grid) {
             this.grid.resizeCanvas();
             this.updateCacheCount();
-        };
-        $(window).on("resize", resizeImpl);
-        resizeImpl();
+        }
     }
 }
