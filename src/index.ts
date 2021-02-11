@@ -1,10 +1,10 @@
-"use strict";
 const electron_app = require('electron');
 const app = electron_app.app;
 const BrowserWindow = electron_app.BrowserWindow;
-require('./main.js');
+require('./main.ts');
 
 async function main() {
+    console.info("Start pictmgr")
     app.whenReady().then(() => {
         createWindow()
     
@@ -32,4 +32,5 @@ async function createWindow() {
 }
 
 main().then();
+
 
