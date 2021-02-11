@@ -34,7 +34,7 @@ const configPass = {
     password: "feif9f8ug33"
 }
 let cacheUpdating = false;
-let cacheData = {
+const cacheDataTemplate = {
     version:"1",
     records: [],
     lastUpdated: 0,
@@ -42,6 +42,7 @@ let cacheData = {
     videoCount: 0,
     latestFiletime: ""
 };
+let cacheData = Object.assign({}, cacheDataTemplate);
 const USER_DATA = electron_app.getPath('userData');
 const CACHE_DIR = path.join(USER_DATA, "photoCache");
 const CACHE_FILE = path.join(CACHE_DIR, "cache.dat");
@@ -78,6 +79,7 @@ async function main() {
     app.post('/api/config/get', (req, res) => { res.json(config) });
     app.post('/api/config/set', (req, res) => { (async () => {
         let result = await updateConfig(req.body).then();
+        app.use('/photos', express.static(config.PHOTO_SRC_DIR), serveIndex(config.PHOTO_SRC_DIR, { 'icons': true }));
         res.json({result:result});
     })()});
     app.listen(port, () => {
@@ -86,37 +88,74 @@ async function main() {
 
     // Load cache data at startup
     let loadedData = loadData(CACHE_FILE);
-    if (loadedData !== undefined && loadData.version == cacheData.version) {
-        console.info("Cahce data loaded");
-        cacheData = loadedData;
+    if (loadedData !== undefined) {
+        if (loadedData.version == cacheData.version) {
+            console.info("Cahce data loaded");
+            cacheData = loadedData;
+        } else {
+            console.info("Cache data : Unmatch version");
+        }
+    } else {
+        console.info("Cache data : Not found");
     }
 }
 
 async function doCache() {
+    if (cacheUpdating) {
+        console.log("Already caching");
+        return true;
+    }
     console.log("start cache");
     cacheUpdating = true;
+    // Make cache per path
     let cachePerPath = {};
-    for (let cacheRecord of cacheData.records) {
-        cachePerPath[cacheRecord.imgsrc] = cacheRecord;
+    for (let idx in cacheData.records) {
+        let record = cacheData.records[idx];
+        cachePerPath[record.imgsrc] = { idx: idx, record: record };
     }
+    // Clear cache except records
+    let tmpRecords = cacheData.records;
+    cacheData = Object.assign({}, cacheDataTemplate);
+    cacheData.records = tmpRecords;
+    // File search
     let filePathes = await globExt(config.PHOTO_SRC_DIR + "/**", TARGET_EXTS,
-        (match) => procOneFIle(match, cachePerPath).then());
+        (match) => procOneFile(match, cachePerPath).then());
+    // Delete unmatched (remained) cache
+    for (let key in cachePerPath) {
+        let entry = cachePerPath[key];
+        let record = cacheData.records[entry.idx];
+        // Delete thumbnail
+        try {
+            fs.unlinkSync(THUMBNAILS_DIR + record.thumbPath);
+        } catch (err) {
+            console.info("Error at unlink:" + err);
+        }
+        // Delete entry
+        delete cacheData.records[entry.idx];
+    }
+    // Normalize index and length of array
+    cacheData.records = cacheData.records.filter(t => (t !== undefined));
+    // Sort by date
     cacheData.records.sort((a, b) => a.date.localeCompare(b.date));
-    console.log("end cache len", cacheData.records.length);
-    cacheUpdating = false;
     // write to file
     saveData(cacheData, CACHE_FILE)
+    // End
+    console.log("end cache len", cacheData.records.length);
+    cacheUpdating = false;
 }
 
-async function procOneFIle(match, cachePerPath) { 
+async function procOneFile(match, cachePerPath) { 
     const relPath = '/photos' + match.substring(config.PHOTO_SRC_DIR.length);
     const thumbPath = relPath + ".thumbnail.png";
     if (relPath in cachePerPath) {
+        appendToCache(cachePerPath[relPath].record, false);
+        delete cachePerPath[relPath]; // Clear from dict
         return; // Already exist in cache
     }
     const record = {
         imgsrc: relPath,
         thumbnail: '/thumbnails' + thumbPath,
+        thumbPath: thumbPath,
         metadata: null,
         date: null,
         isVideo: isVideo(match)
@@ -143,7 +182,7 @@ async function procOneFIle(match, cachePerPath) {
             const buffer = await imageThumbnail(match);
             fs.mkdirSync(path.dirname(THUMBNAILS_DIR + thumbPath), { recursive: true });
             fs.writeFileSync(THUMBNAILS_DIR + thumbPath, buffer);
-            appendToCache(record);
+            appendToCache(record, true);
             console.info('done-image', match);
         }
         catch (err) {
@@ -154,7 +193,7 @@ async function procOneFIle(match, cachePerPath) {
         metadata.stats = stats;
         record.metadata = metadata;
         record.date = stats.mtime.toISOString();;
-        appendToCache(record);
+        appendToCache(record, true);
         console.info('done-video', match);
     }
 }
@@ -168,8 +207,10 @@ function asyncFs(match) {
     }));
 }
 
-async function appendToCache(record) {
-    cacheData.records.push(record);
+async function appendToCache(record, doPush) {
+    if (doPush) {
+        cacheData.records.push(record);
+    }
     if (record.isVideo) {
         cacheData.videoCount += 1;
     } else {
