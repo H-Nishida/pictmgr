@@ -1,7 +1,17 @@
+import UiMain from "./main";
+
 const JSONEditor = require("@json-editor/json-editor");
 
 export default class Cache {
-    constructor(uiMain) {
+    uiMain: UiMain;
+    start: boolean;
+    cacheUpdating: HTMLElement;
+    cacheImageCount: HTMLElement;
+    cacheVideoCount: HTMLElement;
+    cacheLastUpdate: HTMLElement;
+    cacheLatestTimestamp: HTMLElement;
+
+    constructor(uiMain : UiMain) {
         this.uiMain = uiMain;
         this.start = false;
     }
@@ -16,8 +26,8 @@ export default class Cache {
     async onUpdateCacheClicked() {
         await this.uiMain.restApi.startCache();
     }
-    async startUpdating(start) {
-        const sleep = msec => new Promise(resolve => setTimeout(resolve, msec));
+    async startUpdating(start: boolean) {
+        const sleep = ((msec:number) => new Promise(resolve => setTimeout(resolve, msec)));
         if (start) {
             if (this.start == false) {
                 this.start = true;

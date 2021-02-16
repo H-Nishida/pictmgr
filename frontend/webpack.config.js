@@ -16,12 +16,19 @@ module.exports = {
                     },
                 },
             ],
-        }
+        },{
+            test: /\.tsx?$/,
+            use: 'ts-loader',
+            exclude: /node_modules/,
+        },
     ]
+    },
+    resolve: {
+        extensions: [ '.tsx', '.ts', '.js' ],
     },
     mode: "development",
     devtool: "inline-source-map",
-    entry: "./src/index.js",
+    entry: "./src/index.ts",
     output: {
         filename: "app.js",
         path: path.resolve(__dirname, "../dist/public"),

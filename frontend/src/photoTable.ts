@@ -1,4 +1,17 @@
-var jQuery = require('jquery')
+import UiMain from "./main";
+import 'jquery';
+const jQuery = require('jquery');
+import RestApi from "./restApi";
+
+declare global {
+    interface Window {
+        $: any;
+        jQuery: any;
+        Slick: any;
+    }
+}
+declare var Slick: any;
+
 window.$ = jQuery;
 window.jQuery = jQuery;
 require('jquery-migrate')
@@ -9,7 +22,19 @@ const Viewer = require('viewerjs')
 const videojs = require('video.js').default;
 
 export default class PhotoTable {
-    constructor(uiMain) {
+    uiMain: UiMain;
+    data: any;
+    grid: any;
+    restApi: RestApi;
+    pictWidth: number;
+    pictColNum: number;
+    readPageSize: number;
+    cacheCount: number;
+    loadingTimer: NodeJS.Timeout;
+    viewerG: any;
+
+
+    constructor(uiMain: UiMain) {
         this.uiMain = uiMain;
         this.data = {length:0};
         this.grid = null;
@@ -41,7 +66,7 @@ export default class PhotoTable {
             asyncPostRenderReadExtraRows: 10
         };
         this.grid = new Slick.Grid("#photoGridArea", this.data, columns, options);
-        this.grid.onViewportChanged.subscribe((e, args) => {
+        this.grid.onViewportChanged.subscribe((e:any, args:any) => {
             var vp = this.grid.getViewport();
             clearTimeout(this.loadingTimer);
             this.loadingTimer = setTimeout(
@@ -53,7 +78,7 @@ export default class PhotoTable {
         await this.updateCacheCount();
         await this.viewPortChanged(0, 100);
         this.viewerG = new Viewer(document.getElementById("photoGridArea"), {
-            view(ev) {
+            view(ev: any) {
                 const info = JSON.parse(ev.detail.originalImage.dataset.imginfo);
                 if (info.isVideo) {
                     ev.detail.image.classList.add("videoImage");
@@ -62,11 +87,11 @@ export default class PhotoTable {
                     ev.detail.originalImage.src = info.imgpath;
                 }
             },
-            title: [true, (image, imageData) => `${image.alt.replace(".thumbnail.png", "")} (${imageData.naturalWidth} × ${imageData.naturalHeight})`]
+            title: [true, (image:any, imageData:any) => `${image.alt.replace(".thumbnail.png", "")} (${imageData.naturalWidth} × ${imageData.naturalHeight})`]
         });
     }
 
-    async viewPortChanged(from, to) {
+    async viewPortChanged(from:number, to:number) {
         let i;
         let allDataOK = true;
         for (i = from; i < Math.min(to, this.data.length); i++) {
@@ -86,7 +111,7 @@ export default class PhotoTable {
         }
     }
 
-    idxToPageFloor(idx) {
+    idxToPageFloor(idx:number) {
         return Math.floor(idx / this.readPageSize) * this.readPageSize;
     }
 
@@ -108,7 +133,7 @@ export default class PhotoTable {
         }
     }
 
-    async setData(from, to) {
+    async setData(from:number, to:number) {
         const step = this.pictColNum;
         const fromIdx = Math.max(0, from * step);
         const toIdx = Math.min(this.cacheCount, to * step);
@@ -121,18 +146,18 @@ export default class PhotoTable {
         }
     }
 
-    dateFormat(row, cell, value, m, item, self) {
+    dateFormat(row:number, cell:number, value:any, m:any, item:any, self:any) {
         return `<h4><div class="badge badge-dark">${value.substring(0, 4)}<br>${value.substring(5, 10)}</div></h4>`;
     }
 
-    renderPhoto1(row, cell, value, m, item, self) {
+    renderPhoto1(row:number, cell:any, value:any, m:any, item:any, self:any) {
         console.log("format", row);
         let htmlStr = '';
         htmlStr += `loading...`;
         return htmlStr;
     }
 
-    renderPhoto2(cellNode, row, dataContext, colDef) {
+    renderPhoto2(cellNode:any, row:number, dataContext:any, colDef:any) {
         if (dataContext) {
             console.log(cellNode[0].innerHTML, row);
             let htmlStr = "<span class='photoOuter'>";

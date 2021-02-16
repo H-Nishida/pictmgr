@@ -5,6 +5,12 @@ import Config from "./config";
 import Cache from "./cache";
 
 export default class UiMain {
+    restApi: RestApi;
+    navbar: NavBar;
+    config: Config;
+    cache: Cache;
+    photoTable: PhotoTable;
+    
     constructor() {
         this.restApi = new RestApi(this);
         this.navbar = new NavBar(this);

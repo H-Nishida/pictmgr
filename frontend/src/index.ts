@@ -3,6 +3,14 @@ import 'bootstrap';
 import './index.css';
 import UiMain from "./main";
 
+declare global {
+    interface Document {
+        uiMain: UiMain;
+        isDevserver: boolean;
+        devHost: string;
+    }
+}
+
 async function main() {
     var uiMain = new UiMain();
     document.uiMain = uiMain; // for debug purpose;

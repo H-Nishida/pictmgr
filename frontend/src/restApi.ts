@@ -1,21 +1,21 @@
-
+import UiMain from "./main";
 import PhotoTable from "./photoTable";
 
 export default class RestApi {
-    constructor() {
+    constructor(uiMain: UiMain) {
     }
     async init() {
         
     }
     async getCacheCount() {
-        const jsonRes = await this.fetchImpl('/api/cache/count');
+        const jsonRes = await this.fetchImpl('/api/cache/count', undefined);
         return jsonRes["count"];
     }
     async getCacheStat() {
-        const jsonRes = await this.fetchImpl('/api/cache/stat');
+        const jsonRes = await this.fetchImpl('/api/cache/stat', undefined);
         return jsonRes;
     }
-    async getCacheData(from, to) {
+    async getCacheData(from:number, to:number) {
         const jsonRes = await this.fetchImpl('/api/cache/data', {from:from, to:to});
         return jsonRes;
     }
@@ -26,11 +26,11 @@ export default class RestApi {
         const jsonRes = await this.fetchImpl('/api/config/get', {});
         return jsonRes;
     }
-    async setConfig(newConfig) {
+    async setConfig(newConfig:object) {
         const jsonRes = await this.fetchImpl('/api/config/set', newConfig);
         return jsonRes;
     }
-    async fetchImpl(url, postJson) {
+    async fetchImpl(url:string, postJson:object){
         url = document.devHost + url;
         const response = await fetch(url, {
             method: 'POST', // *GET, POST, PUT, DELETE, etc.

@@ -1,7 +1,13 @@
+
 const JSONEditor = require("@json-editor/json-editor");
+import UiMain from "./main";
 
 export default class Config {
-    constructor(uiMain) {
+    uiMain: UiMain;
+    element: HTMLElement;
+    editor: any;
+
+    constructor(uiMain: UiMain) {
         this.uiMain = uiMain;
         this.element = null;
         this.editor = null;

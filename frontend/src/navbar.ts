@@ -1,12 +1,15 @@
 import RestApi from "./restApi";
+import UiMain from "./main";
 
 export default class NavBar {
-    constructor(uiMain) {
+    uiMain: UiMain;
+
+    constructor(uiMain: UiMain) {
         this.uiMain = uiMain;
     }
     async init() {
         // Add click handler
-        document.getElementsByClassName("targetNav").forEach(element => {
+        Array.from(document.getElementsByClassName("targetNav")).forEach((element:any) => {
             element.onclick = () => this.onClickNav(element.hash.substring(1));
         });
         // URL Parse
@@ -18,9 +21,9 @@ export default class NavBar {
         }
     }
 
-    onClickNav(targetId) {
+    onClickNav(targetId:string) {
         // Hide all
-        document.getElementsByClassName("topArticle").forEach(element => {
+        Array.from(document.getElementsByClassName("topArticle")).forEach((element:any) => {
             element.style.display = "none";
         });
         // Show target
