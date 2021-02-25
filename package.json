@@ -9,8 +9,8 @@
     "build": "yarn -s run webpack --mode production  --config ./webpack.config.js --context ./",
     "build-front": "pushd frontend; yarn build; popd",
     "start": "yarn -s run electron ./dist/app.js",
-    "start-dev": "yarn -s run electron ./src/index.js",
-    "dist": "yarn build && yarn build-front && electron-builder",
+    "license": "yarn licenses generate-disclaimer > dist/public/oss.txt",
+    "dist": "yarn build && yarn build-front && yarn license && electron-builder",
     "runpkg-mac": "./build/mac/pictmgr.app/Contents/MacOS/pictmgr"
   },
   "build": {
@@ -51,7 +51,7 @@
     "image-thumbnail": "^1.0.13",
     "pako": "^2.0.3",
     "serve-index": "^1.9.1",
-    "sharp": "^0.27.0"
+    "sharp": "^0.25.4"
   },
   "devDependencies": {
     "@types/express": "^4.17.11",

@@ -194,7 +194,7 @@ export default class PhotoTable {
     }
 
     setResize() {
-        $(window).on("resize", () => this.doResize);
+        $(window).on("resize", () => this.doResize());
         this.doResize();
     }
 

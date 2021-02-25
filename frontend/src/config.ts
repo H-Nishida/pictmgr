@@ -23,6 +23,11 @@ export default class Config {
                         type: "string",
                         title: "PHOTO_SRC_DIR",
                         description: "Specify directory path which includes photos."
+                    },
+                    PORT_NUMBER: {
+                        type: "number",
+                        title: "PORT_NUMBER",
+                        description: "Port number. The changes will reflect after reboot",
                     }
                 },
                 title: "config.json",

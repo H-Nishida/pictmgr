@@ -10,18 +10,19 @@ export default class NavBar {
     async init() {
         // Add click handler
         Array.from(document.getElementsByClassName("targetNav")).forEach((element:any) => {
-            element.onclick = () => this.onClickNav(element.hash.substring(1));
+            element.onclick = () => this.onClickNav(element.hash.substring(1), false);
         });
+
         // URL Parse
         const hashInUrl = window.location.hash;
         if (hashInUrl && hashInUrl.startsWith("#Article")) {
-            this.onClickNav(hashInUrl.substring(1));
+            this.onClickNav(hashInUrl.substring(1), true);
         } else {
-            this.onClickNav("ArticlePhoto");
+            this.onClickNav("ArticlePhoto", true);
         }
     }
 
-    onClickNav(targetId:string) {
+    onClickNav(targetId:string, initial:boolean) {
         // Hide all
         Array.from(document.getElementsByClassName("topArticle")).forEach((element:any) => {
             element.style.display = "none";
@@ -30,8 +31,9 @@ export default class NavBar {
         document.getElementById(targetId).style.display = "initial";
         // Special handling
         if (targetId == "ArticlePhoto") {
-            this.uiMain.photoTable.doResize();
-            setTimeout(() =>this.uiMain.photoTable.doResize(), 500);
+            if (!initial) {
+                setTimeout(() => location.reload(), 100);
+            }
         }
         this.uiMain.cache.startUpdating(targetId == "ArticleCache").then();
     }

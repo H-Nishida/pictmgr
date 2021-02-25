@@ -22,13 +22,14 @@ async function main() {
 async function createWindow() {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
+        nodeIntegration: false,
         width: 800,
         height: 600
     })
     mainWindow.loadURL(`http://localhost:3000/`);
 
     // Open the DevTools.
-    //mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 }
 
 main().then();

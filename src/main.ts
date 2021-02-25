@@ -15,8 +15,7 @@ export module Main {
     const path = require('path');
     const { strict } = require('assert');
     const { resolve } = require('path');
-    const app = express()
-    const port = 3000
+    const app = express();
     const TARGET_EXTS = [
         "*.jpg", "*.jpeg", "*.png",
         "*.mp4", "*.mov", "*.mts", "*.m2ts", "*.avi", "*.gp3"
@@ -59,25 +58,34 @@ export module Main {
     const CONFIG_FILE = path.join(USER_DATA, "config.json");
     console.info("cache-dir is " + CACHE_DIR);
     interface Config {
-        PHOTO_SRC_DIR: string
+        VERSION: number;
+        PHOTO_SRC_DIR: string;
+        PORT_NUMBER: number;
     }
     let config: Config = {
-        PHOTO_SRC_DIR: ""
+        VERSION:1,
+        PHOTO_SRC_DIR: "",
+        PORT_NUMBER: 3000
     };
 
     async function main() {
         // Read config
-        config = loadData(CONFIG_FILE, config);
+        let loadedConfig = loadData(CONFIG_FILE, config);
+        if (loadedConfig && loadedConfig.VERSION == config.VERSION) {
+            config = loadedConfig;
+        }
 
         //app.use(passwordProtected(config))
-        app.use(express.json())
+        app.use(express.json());
         app.use(express.urlencoded({ extended: true }));
-        app.use(cors()) // TODO: dev only
-        app.post('/', (req, res) => { res.sendStatus(200) })
-        console.info("path", path.join(__dirname, './public'))
-        app.use('/static', express.static(path.join(__dirname, './public')))
-        app.get('/', function (req, res) {res.redirect(MAIN_PAGE)})
-        app.use('/photos', express.static(config.PHOTO_SRC_DIR), serveIndex(config.PHOTO_SRC_DIR, { 'icons': true }));
+        app.use(cors()); // TODO: dev only
+        app.post('/', (req, res) => { res.sendStatus(200) });
+        console.info("path", path.join(__dirname, './public'));
+        app.use('/static', express.static(path.join(__dirname, './public')));
+        app.get('/', function (req, res) { res.redirect(MAIN_PAGE) });
+        if (config.PHOTO_SRC_DIR && fs.existsSync(config.PHOTO_SRC_DIR)) {
+            app.use('/photos', express.static(config.PHOTO_SRC_DIR), serveIndex(config.PHOTO_SRC_DIR, { 'icons': true }));
+        }
         app.use('/thumbnails', express.static(THUMBNAILS_DIR), serveIndex(THUMBNAILS_DIR, { 'icons': true }));
         app.post('/api/cache/count', (req, res) => { res.json({ count: cacheData.records.length }) });
         app.post('/api/cache/start', (req, res) => { res.sendStatus(200); doCache().then() });
@@ -88,14 +96,18 @@ export module Main {
             statObj.updating = cacheUpdating;
             res.json(statObj)
         });
-        app.post('/api/config/get', (req, res) => { res.json(config) });
+        app.post('/api/config/get', (req, res) => {
+            let retConfig = Object.assign({}, config);
+            delete (retConfig.VERSION);
+            res.json(retConfig)
+        });
         app.post('/api/config/set', (req, res) => { (async () => {
             let result = await updateConfig(req.body).then();
             app.use('/photos', express.static(config.PHOTO_SRC_DIR), serveIndex(config.PHOTO_SRC_DIR, { 'icons': true }));
             res.json({result:result});
         })()});
-        app.listen(port, () => {
-            console.log(`listening at http://localhost:${port}`)
+        app.listen(config.PORT_NUMBER, () => {
+            console.log(`listening at http://localhost:${config.PORT_NUMBER}`)
         })
 
         // Load cache data at startup
@@ -235,7 +247,11 @@ export module Main {
     }
 
     async function updateConfig(newConfig: Config) {
+        newConfig.VERSION = config.VERSION;
         config = newConfig;
+        if (config.PHOTO_SRC_DIR.endsWith("/")) {
+            config.PHOTO_SRC_DIR = config.PHOTO_SRC_DIR.slice(0, -1);
+        }
         return saveData(config, CONFIG_FILE);
     }
 
