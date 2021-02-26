@@ -2,9 +2,8 @@
 Picture manager for familly.
 
 See details:
-
-http://www.hykn.org/hnb/pictmgr/ : Japanese
-http://www.hykn.org/hnb/pictmgr_en/ : English
+ - http://www.hykn.org/hnb/pictmgr/ : Japanese
+ - http://www.hykn.org/hnb/pictmgr_en/ : English
 
 
 # Function
