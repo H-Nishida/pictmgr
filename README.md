@@ -2,13 +2,12 @@
 Picture manager for familly.
 
 # Function
- - Collect all photo/movie files in multiple folder to one folder
+ - View all photos in specified folder with infinite scroll like google photo. Both desctop application and web browser are supported.
   
-![](doc/01_photo_dir.png)
+![](doc/01_pictmgr.png)
 
 
- 
 # Roadmap in future
- - View photos by browser with infinite scroll like google photo
+ - Support search function.
  
  

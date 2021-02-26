@@ -2,24 +2,31 @@
   "name": "pictmgr",
   "version": "1.0.0",
   "description": "Photo viewer",
-  "main": "./dist/app.js",
+  "main": "./build/app.js",
   "scripts": {
     "postinstall": "pushd frontend; yarn install; popd",
     "build-dev": "yarn -s run webpack --mode development  --config ./webpack.config.js --context ./",
     "build": "yarn -s run webpack --mode production  --config ./webpack.config.js --context ./",
     "build-front": "pushd frontend; yarn build; popd",
-    "start": "yarn -s run electron ./dist/app.js",
-    "license": "yarn licenses generate-disclaimer > dist/public/oss.txt",
+    "start": "yarn -s run electron ./build/app.js",
+    "license": "yarn licenses generate-disclaimer > build/public/oss.txt",
     "dist": "yarn build && yarn build-front && yarn license && electron-builder",
-    "runpkg-mac": "./build/mac/pictmgr.app/Contents/MacOS/pictmgr"
+    "runpkg-mac": "./dist/mac/pictmgr.app/Contents/MacOS/pictmgr"
   },
   "build": {
     "appId": "family.photo",
     "mac": {
-      "category": "public.app-category.photography"
+      "category": "public.app-category.photography",
+      "target": "dmg",
+      "icon": "./icon.png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "./icon.png"
     },
     "directories": {
-      "output": "build"
+      "buildResources": "buildRes",
+      "output": "dist"
     }
   },
   "repository": {

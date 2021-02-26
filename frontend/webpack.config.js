@@ -31,12 +31,12 @@ module.exports = {
     entry: "./src/index.ts",
     output: {
         filename: "app.js",
-        path: path.resolve(__dirname, "../dist/public"),
+        path: path.resolve(__dirname, "../build/public"),
     },
     devServer: {
         inline: false,
         hot: true,
-        contentBase: path.resolve(__dirname, "../dist/public"),
+        contentBase: path.resolve(__dirname, "../build/public"),
         watchOptions: {
             poll: true
         },

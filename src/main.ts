@@ -287,6 +287,10 @@ export module Main {
         }
     }
 
+    function getPortNumber(): number {
+        return config.PORT_NUMBER;
+    }
 
     main().then();
+    module.exports.getPortNumber = getPortNumber;
 }

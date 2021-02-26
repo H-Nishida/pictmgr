@@ -5,10 +5,10 @@ const HtmlWebPackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   entry: {
-    server: "./src/index.ts",
+    server: "./build/app.js",
   },
   output: {
-    path: path.join(__dirname, "dist"),
+    path: path.join(__dirname, "build"),
     publicPath: "/",
     filename: "app.js",
   },

@@ -1,7 +1,7 @@
 const electron_app = require('electron');
 const app = electron_app.app;
 const BrowserWindow = electron_app.BrowserWindow;
-require('./main.ts');
+const Main = require('./main.ts');
 
 async function main() {
     console.info("Start pictmgr")
@@ -26,12 +26,12 @@ async function createWindow() {
         width: 800,
         height: 600
     })
-    mainWindow.loadURL(`http://localhost:3000/`);
+    mainWindow.loadURL(`http://localhost:${Main.getPortNumber()}/`);
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools()
+    //mainWindow.webContents.openDevTools()
 }
-
+//debugger;
 main().then();
 
 
